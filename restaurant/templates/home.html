@@ -1,0 +1,60 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Restaurant Management System</title>
+    <link rel="stylesheet" href="{% static 'css/style.css' %}">
+</head>
+<body>
+ 
+    <header>
+        <h1>🍽 Restaurant Management System</h1>
+        <p>Admin Dashboard</p>
+    </header>
+ 
+    <main>
+        <h2>Manage your restaurant</h2>
+ 
+        <!-- Each option is a "card" inside a CSS grid -->
+        <div class="dashboard-grid">
+ 
+            <a href="/menu/" class="dashboard-card">
+                <span class="icon">📋</span>
+                <span class="label">Manage Menu</span>
+            </a>
+ 
+            <a href="/orders/" class="dashboard-card">
+                <span class="icon">🧾</span>
+                <span class="label">Manage Orders</span>
+            </a>
+ 
+            <!-- Not wired up yet, so marked visually as disabled
+                 instead of being a dead/misleading link -->
+            <div class="dashboard-card disabled">
+                <span class="icon">👥</span>
+                <span class="label">Manage Staff</span>
+            </div>
+            
+            <a href="/tables/" class="dashboard-card">
+                <span class="icon">🪑🍽</span>
+                <span class="label">Manage Tables</span>
+            </a>
+ 
+            <a href="{% url 'sales_report' %}" class="dashboard-card">
+                <span class="icon">📊</span>
+                <span class="label">Sales Report</span>
+            </a>
+
+            
+ 
+        </div>
+    </main>
+ 
+    <footer>
+        &copy; 2026 Restaurant Management System
+    </footer>
+ 
+</body>
+</html>

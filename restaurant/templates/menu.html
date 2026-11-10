@@ -1,0 +1,109 @@
+{% load static %}
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Menu Management</title>
+
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.8/dist/css/bootstrap.min.css" rel="stylesheet">
+
+    <style>
+        body {
+            background-color: #f7f4ef;
+        }
+
+        .page-title {
+            color: #e76f51;
+            font-weight: bold;
+        }
+
+        .card {
+            border: none;
+            border-radius: 15px;
+            box-shadow: 0 4px 12px rgba(0,0,0,0.1);
+        }
+
+        .table thead {
+            background-color: #e76f51;
+            color: white;
+        }
+
+        tr:hover {
+            background-color: #fff8f3;
+        }
+    </style>
+</head>
+
+<body>
+
+<nav class="navbar navbar-expand-lg navbar-dark bg-dark shadow">
+    <div class="container">
+        <a class="navbar-brand fw-bold" href="/">🍽 RestaurantMS</a>
+
+        <div class="navbar-nav">
+            <a class="nav-link" href="/">Home</a>
+            <a class="nav-link active" href="/menu/">Menu</a>
+            <a class="nav-link" href="/order/">Place Order</a>
+            <a class="nav-link" href="/orders/">Orders</a>
+        </div>
+    </div>
+</nav>
+
+<div class="container mt-5">
+
+    <h1 class="page-title mb-4">🍔 Menu Management</h1>
+
+    <div class="card p-4">
+
+        <div class="table-responsive">
+            <table class="table table-hover align-middle">
+
+                <thead>
+                    <tr>
+                        <th>Food Item</th>
+                        <th>Price</th>
+                        <th>Actions</th>
+                    </tr>
+                </thead>
+
+                <tbody>
+
+                    {% for food in foods %}
+                    <tr>
+                        <td>{{ food.name }}</td>
+
+                        <td class="fw-bold">
+                            ₹{{ food.price }}
+                        </td>
+
+                        <td>
+                            <a href="{% url 'update_menu' food.id %}"
+                               class="btn btn-warning btn-sm">
+                                Update
+                            </a>
+
+                            <a href="{% url 'delete_menu' food.id %}"
+                               class="btn btn-danger btn-sm"
+                               onclick="return confirm('Delete this item?')">
+                                Delete
+                            </a>
+                        </td>
+                    </tr>
+                    {% empty %}
+                    <tr>
+                        <td colspan="3" class="text-center text-muted py-4">
+                            No food items available.
+                        </td>
+                    </tr>
+                    {% endfor %}
+
+                </tbody>
+
+            </table>
+        </div>
+
+    </div>
+
+</div>
+
+</body>
+</html>

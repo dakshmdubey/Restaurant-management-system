@@ -1,0 +1,260 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Manage Orders</title>
+
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.8/dist/css/bootstrap.min.css" rel="stylesheet">
+
+    <style>
+        body {
+            background-color: #f7f4ef;
+        }
+
+        .page-title {
+            color: #e76f51;
+            font-weight: bold;
+        }
+
+        .card {
+            border: none;
+            border-radius: 15px;
+            box-shadow: 0 4px 12px rgba(0,0,0,0.1);
+        }
+
+        .table thead {
+            background-color: #e76f51;
+            color: white;
+        }
+
+        .stat-card {
+            border-radius: 15px;
+            text-align: center;
+            padding: 20px;
+            color: white;
+        }
+
+        .total-orders {
+            background: #3498db;
+        }
+
+        .total-revenue {
+            background: #27ae60;
+        }
+
+        .quantity-badge {
+            font-size: 15px;
+        }
+
+        tr:hover {
+            background-color: #fff8f3;
+        }
+    </style>
+</head>
+
+<body>
+
+<nav class="navbar navbar-expand-lg navbar-dark bg-dark shadow">
+    <div class="container">
+        <a class="navbar-brand fw-bold" href="/">🍽 RestaurantMS</a>
+
+        <div class="navbar-nav">
+            <a class="nav-link" href="/">Home</a>
+            <a class="nav-link" href="/menu/">Menu</a>
+            <a class="nav-link" href="/order/">Place Order</a>
+            <a class="nav-link active" href="/orders/">Orders</a>
+        </div>
+    </div>
+</nav>
+
+<div class="container mt-5">
+
+    <div class="d-flex justify-content-between align-items-center mb-4">
+        <h1 class="page-title">📋 Restaurant Orders</h1>
+
+        <a href="/order/" class="btn btn-success">
+            + New Order
+        </a>
+    </div>
+
+    <div class="row mb-4">
+        <div class="col-md-6 mb-3">
+            <div class="stat-card total-orders">
+                <h5>Total Orders</h5>
+                <h2>{{ orders|length }}</h2>
+            </div>
+        </div>
+
+        <div class="col-md-6 mb-3">
+            <div class="stat-card total-revenue">
+                <h5>Total Revenue</h5>
+                <h2>₹{{ total_revenue }}</h2>
+            </div>
+        </div>
+    </div>
+
+    <div class="row mb-4">
+
+        <div class="col-md-3 mb-3">
+            <div class="stat-card bg-warning text-dark">
+                <h5>Pending</h5>
+                <h2>{{ pending }}</h2>
+            </div>
+        </div>
+
+        <div class="col-md-3 mb-3">
+            <div class="stat-card bg-primary">
+                <h5>Preparing</h5>
+                <h2>{{ preparing }}</h2>
+            </div>
+        </div>
+
+        <div class="col-md-3 mb-3">
+            <div class="stat-card bg-success">
+                <h5>Ready</h5>
+                <h2>{{ ready }}</h2>
+            </div>
+        </div>
+
+        <div class="col-md-3 mb-3">
+            <div class="stat-card bg-dark">
+                <h5>Delivered</h5>
+                <h2>{{ delivered }}</h2>
+            </div>
+        </div>
+
+    </div>
+
+    <!-- Search and Filter -->
+    <div class="card p-3 mb-4">
+
+        <form method="GET">
+            <div class="row">
+
+                <div class="col-md-8 mb-2">
+                    <input type="text"
+                           name="search"
+                           class="form-control"
+                           placeholder="Search customer or food item..."
+                           value="{{ request.GET.search }}">
+                </div>
+
+                <div class="col-md-4 mb-2">
+                    <button type="submit" class="btn btn-primary w-100">
+                        🔍 Search
+                    </button>
+                </div>
+
+            </div>
+        </form>
+
+        <div class="mt-3">
+            <a href="/orders/" class="btn btn-secondary">All</a>
+            <a href="?status=Pending" class="btn btn-warning">Pending</a>
+            <a href="?status=Preparing" class="btn btn-primary">Preparing</a>
+            <a href="?status=Ready" class="btn btn-success">Ready</a>
+            <a href="?status=Delivered" class="btn btn-dark">Delivered</a>
+        </div>
+
+    </div>
+
+    <div class="card p-3">
+
+        <div class="table-responsive">
+            <table class="table table-hover align-middle mb-0">
+
+                <thead>
+                    <tr>
+                        <th>Customer</th>
+                        <th>Table</th>
+                        <th>Food Item</th>
+                        <th>Price</th>
+                        <th>Quantity</th>
+                        <th>Total</th>
+                        <th>Status</th>
+                        <th>Bill</th>
+                    </tr>
+                </thead>
+
+                <tbody>
+
+                    {% for order in orders %}
+                    <tr>
+
+                        <td>{{ order.customer_name }}</td>
+                        <td>
+                            {% if order.table %}
+                            Table {{ order.table.table_number }}
+                            {% else %}
+                            -
+                            {% endif %}
+                        </td>
+
+                        <td>{{ order.food_item.name }}</td>
+
+                        <td>₹{{ order.food_item.price }}</td>
+
+                        <td>
+                            <span class="badge bg-secondary quantity-badge">
+                                {{ order.quantity }}
+                            </span>
+                        </td>
+
+                        <td class="fw-bold">
+                            ₹{{ order.total }}
+                        </td>
+
+                        <td>
+
+                            {% if order.status == "Pending" %}
+                                <span class="badge bg-warning text-dark">
+                                    Pending
+                                </span>
+
+                            {% elif order.status == "Preparing" %}
+                                <span class="badge bg-primary">
+                                    Preparing
+                                </span>
+
+                            {% elif order.status == "Ready" %}
+                                <span class="badge bg-success">
+                                    Ready
+                                </span>
+
+                            {% else %}
+                                <span class="badge bg-dark">
+                                    Delivered
+                                </span>
+                            {% endif %}
+
+                        </td>
+                        <td>
+                            <a href="/bill/{{ order.id }}/"
+                            class="btn btn-sm btn-danger">
+                            PDF
+                            </a>
+                        </td>
+
+                    </tr>
+
+                    {% empty %}
+                    <tr>
+                        <td colspan="6" class="text-center py-4 text-muted">
+                            No orders found.
+                        </td>
+                    </tr>
+                    {% endfor %}
+
+                </tbody>
+
+            </table>
+        </div>
+
+    </div>
+
+</div>
+
+</body>
+</html>
